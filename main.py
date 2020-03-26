@@ -256,8 +256,22 @@ class SimpleRobotControl:
         )
 
         # TODO
-        local_speed = 0
-        local_turn = 0
+        # x, y relative to the robot
+        x = m.x_goal - m.x
+        y = m.y_goal - m.y
+
+        # cartesian to polar coordonates
+        angle_goal = 2*math.atan(y/(x + math.sqrt(x*x + y*y)))
+        # difference between angles
+        diff_angle = self.angle_diff(angle_goal, m.theta)
+        # print(f"Angle_Goal : {angle_goal}")
+        # print(f"Diff_angle : {diff_angle}")
+        # print(f"Robot_angle : {self.m.theta}")
+
+        # Proportional asserv
+        local_speed = distance
+        # print(f"Distance : {distance}")
+        local_turn = diff_angle/local_speed
 
         m1_speed, m2_speed = m.ik(local_speed, local_turn)
         m.m1.speed = m1_speed
@@ -267,7 +281,7 @@ class SimpleRobotControl:
         """Returns the smallest distance between 2 angles
         """
         # TODO
-        d = 0
+        d = math.atan2(math.sin(a-b), math.cos(a-b))
         return d
 
 
@@ -282,3 +296,5 @@ def main():
 # if python says run, then we should run
 if __name__ == "__main__":
     main()
+
+
